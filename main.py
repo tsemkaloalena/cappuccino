@@ -8,11 +8,12 @@ class MyWidget(QWidget):
     def __init__(self):
         super().__init__()
         uic.loadUi('main.ui', self)
-        self.loadUi('coffee.db')
+        self.db = 'coffee.db'
+        self.loadUi()
         self.btn.clicked.connect(self.change_table)
 
-    def loadUi(self, dbname):
-        con = sqlite3.connect(dbname)
+    def loadUi(self):
+        con = sqlite3.connect(self.db)
         cur = con.cursor()
         result = cur.execute("SELECT * FROM about").fetchall()
         title = ['ID', 'Название сорта', 'Степень обжарки', 'Молотый/в зернах', 'Описание вкуса', 'Цена',
@@ -38,21 +39,21 @@ class addEditCoffeeForm(QWidget):
     def __init__(self, *db):
         super().__init__()
         uic.loadUi('addEditCoffeeForm.ui', self)
-        self.db = db[0]
+        self.db = db[-1]
         self.loadUi()
         self.tableWidget.itemChanged.connect(self.item_changed)
         self.save_btn.clicked.connect(self.save_table)
         self.modified = {}
 
     def loadUi(self):
-        con = sqlite3.connect(self.db)
-        cur = con.cursor()
+        self.con = sqlite3.connect(self.db)
+        cur = self.con.cursor()
         result = cur.execute("SELECT * FROM about").fetchall()
-        title = ['ID', 'Название сорта', 'Степень обжарки', 'Молотый/в зернах', 'Описание вкуса', 'Цена',
-                 'Объём упаковки']
+        self.titles = ['ID', 'Название сорта', 'Степень обжарки', 'Молотый/в зернах', 'Описание вкуса', 'Цена',
+                       'Объём упаковки']
 
-        self.tableWidget.setColumnCount(len(title))
-        self.tableWidget.setHorizontalHeaderLabels(title)
+        self.tableWidget.setColumnCount(len(self.titles))
+        self.tableWidget.setHorizontalHeaderLabels(self.titles)
 
         self.tableWidget.setRowCount(0)
         for i, row in enumerate(result):
@@ -63,16 +64,17 @@ class addEditCoffeeForm(QWidget):
         self.modified = {}
 
     def item_changed(self, item):
+        self.id = item.row() + 1
         self.modified[self.titles[item.column()]] = item.text()
 
-    def save_results(self):
+    def save_table(self):
         if self.modified:
             cur = self.con.cursor()
             que = "UPDATE about SET\n"
             for key in self.modified.keys():
                 que += "{}='{}'\n".format(key, self.modified.get(key))
-            que += "WHERE id = ?"
-            cur.execute(que, (self.spinBox.text(),))
+            que += "WHERE id = {}".format(self.id)
+            cur.execute(que)
             self.con.commit()
 
 
