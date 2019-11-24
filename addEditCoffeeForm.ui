@@ -60,7 +60,7 @@
    <item row="3" column="0">
     <widget class="QPushButton" name="save_btn">
      <property name="text">
-      <string>Сохранить изменение</string>
+      <string>Сохранить изменения</string>
      </property>
     </widget>
    </item>
