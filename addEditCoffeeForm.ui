@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1324</width>
-    <height>724</height>
+    <height>657</height>
    </rect>
   </property>
   <property name="font">
@@ -23,13 +23,20 @@
    <string notr="true">color: rgb(125, 83, 58);</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QTableWidget" name="tableWidget">
      <property name="font">
       <font>
        <weight>50</weight>
        <bold>false</bold>
       </font>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QPushButton" name="add_btn">
+     <property name="text">
+      <string>Добавить строчку</string>
      </property>
     </widget>
    </item>
@@ -50,10 +57,10 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QPushButton" name="save_btn">
      <property name="text">
-      <string>Сохранить</string>
+      <string>Сохранить изменение</string>
      </property>
     </widget>
    </item>

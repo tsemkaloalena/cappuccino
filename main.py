@@ -33,6 +33,7 @@ class MyWidget(QWidget):
     def change_table(self):
         self.change_form = addEditCoffeeForm(self, self.db)
         self.change_form.show()
+        # self.loadUi()
 
 
 class addEditCoffeeForm(QWidget):
@@ -64,17 +65,15 @@ class addEditCoffeeForm(QWidget):
         self.modified = {}
 
     def item_changed(self, item):
-        self.id = item.row() + 1
-        self.modified[self.titles[item.column()]] = item.text()
+        self.modified[(self.titles[item.column()], item.row() + 1)] = item.text()
 
     def save_table(self):
         if self.modified:
             cur = self.con.cursor()
-            que = "UPDATE about SET\n"
             for key in self.modified.keys():
-                que += "{}='{}'\n".format(key, self.modified.get(key))
-            que += "WHERE id = {}".format(self.id)
-            cur.execute(que)
+                q = "UPDATE about SET\n [{}]='{}' WHERE id = {}\n".format(key[0], self.modified.get(key), key[1])
+                cur.execute("UPDATE about SET\n [{}]='{}' WHERE id = {}\n".format(key[0], self.modified.get(key), key[1]))
+
             self.con.commit()
 
 
