@@ -91,6 +91,7 @@ class addEditCoffeeForm(QWidget):
                 cur.execute(
                     "INSERT INTO about{} VALUES{}".format(tuple(self.titles), tuple(vals)))
                 self.con.commit()
+                self.new = False
 
     def add(self):
         self.tableWidget.setRowCount(self.tableWidget.rowCount() + 1)
