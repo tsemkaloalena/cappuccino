@@ -71,9 +71,8 @@ class addEditCoffeeForm(QWidget):
         if self.modified:
             cur = self.con.cursor()
             for key in self.modified.keys():
-                q = "UPDATE about SET\n [{}]='{}' WHERE id = {}\n".format(key[0], self.modified.get(key), key[1])
-                cur.execute("UPDATE about SET\n [{}]='{}' WHERE id = {}\n".format(key[0], self.modified.get(key), key[1]))
-
+                cur.execute(
+                    "UPDATE about SET\n [{}]='{}' WHERE id = {}\n".format(key[0], self.modified.get(key), key[1]))
             self.con.commit()
 
 
