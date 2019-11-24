@@ -44,7 +44,9 @@ class addEditCoffeeForm(QWidget):
         self.loadUi()
         self.tableWidget.itemChanged.connect(self.item_changed)
         self.save_btn.clicked.connect(self.save_table)
+        self.add_btn.clicked.connect(self.add)
         self.modified = {}
+        self.new = False
 
     def loadUi(self):
         self.con = sqlite3.connect(self.db)
@@ -65,15 +67,34 @@ class addEditCoffeeForm(QWidget):
         self.modified = {}
 
     def item_changed(self, item):
-        self.modified[(self.titles[item.column()], item.row() + 1)] = item.text()
+        id = self.tableWidget.item(item.row(), 0).text()
+        self.modified[(self.titles[item.column()], id)] = item.text()
 
     def save_table(self):
         if self.modified:
-            cur = self.con.cursor()
-            for key in self.modified.keys():
+            if not self.new:
+                cur = self.con.cursor()
+                for key in self.modified.keys():
+                    cur.execute(
+                        "UPDATE about SET\n [{}]='{}' WHERE id = {}\n".format(key[0], self.modified.get(key), key[1]))
+                self.con.commit()
+            else:
+                vals = []
+                vals.append(self.tableWidget.item(self.tableWidget.rowCount() - 1, 0).text())
+                vals.append(self.tableWidget.item(self.tableWidget.rowCount() - 1, 1).text())
+                vals.append(self.tableWidget.item(self.tableWidget.rowCount() - 1, 2).text())
+                vals.append(self.tableWidget.item(self.tableWidget.rowCount() - 1, 3).text())
+                vals.append(self.tableWidget.item(self.tableWidget.rowCount() - 1, 4).text())
+                vals.append(self.tableWidget.item(self.tableWidget.rowCount() - 1, 5).text())
+                vals.append(self.tableWidget.item(self.tableWidget.rowCount() - 1, 6).text())
+                cur = self.con.cursor()
                 cur.execute(
-                    "UPDATE about SET\n [{}]='{}' WHERE id = {}\n".format(key[0], self.modified.get(key), key[1]))
-            self.con.commit()
+                    "INSERT INTO about{} VALUES{}".format(tuple(self.titles), tuple(vals)))
+                self.con.commit()
+
+    def add(self):
+        self.tableWidget.setRowCount(self.tableWidget.rowCount() + 1)
+        self.new = True
 
 
 if __name__ == '__main__':
